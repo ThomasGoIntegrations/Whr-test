@@ -8,7 +8,6 @@ let arr: Array<string> = str.split("|");
 console.log(arr);
 
 
-
 const addresses = arr;
 const latarray = [];
 
