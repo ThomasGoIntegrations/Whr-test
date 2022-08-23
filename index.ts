@@ -1,44 +1,72 @@
 
+import { ParmMap, RootObject } from './map-response';
+
 const queryString = window.location.search;
 //3762 20 nw edmonton, t6t1r8 | 608 Windross Crescent NW, Edmonton, AB T6T 1X9
 const urlParams = new URLSearchParams(queryString);
 
 let str: string = urlParams.get('code') || '';
-let arr: Array<string> = str.split("|");
-console.log(arr);
+let obj: ParmMap = JSON.parse(str);
 
 
-const addresses = arr;
-const latarray = [];
+var requestOptions = {
+  method: 'GET',
+  redirect: 'follow'
+};
+let centerlat : number = obj.centerlat;
+let centerlng : number = obj.centerlng;
 
-var geocoder;
+ function returnLocationArray(str : string) : string[][]{
+  let arr: Array<string> = str.split("|");
+  let count : number = 0;
+  let locationArray : string[][]  = [];
+  console.log(arr);
+  arr.forEach(element => {
+    count++;
+    fetch("https://maps.googleapis.com/maps/api/geocode/json?address="+element+"&key=AIzaSyCP25x8TMx7au58HJtmE_8518KEpQw2xgU", requestOptions)
+  .then(response => response.text())
+  .then(  result =>{
+    console.log(result);
+    let obj: RootObject = JSON.parse(result);
+    if(obj.results.length > 0)
+    {
+        obj.results.forEach(result => {
+          let stringLat : string = result.geometry.location.lat.toString();
+          let stringLng : string = result.geometry.location.lng.toString();
+          centerlat = result.geometry.location.lat;
+          centerlng =result.geometry.location.lng;
+          let formatted_address : string = result.formatted_address;
+          let locationarray : string[] = [formatted_address,stringLat,stringLng,count.toString()];
+          console.log( locationarray);
+          locationArray.push(locationarray);
+        });
+    }
 
-// const express = require('express');
-// const app = express();
-// const port = 5000;
-// app.listen(3000);
+
+  } 
+  )
+  .catch(error => console.log('error', error));
+  });
+  return locationArray;
+}
+let locations : string[][] =  obj.Locations ;
 
 
-// function codeAddress(geocoder, map) {
-//   geocoder.geocode({'address': address}, function(results, status) {
-//     if (status === 'OK') {
-//       map.setCenter(results[0].geometry.location);
-//       var marker = new google.maps.Marker({
-//         map: map,
-//         position: results[0].geometry.location
-//       });
-//     } else {
-//       alert('Geocode was not successful for the following reason: ' + status);
-//     }
-//   });
-// }
+
+
+
+
 
 
 function initAutocomplete() {
+
+
+  
+    console.log(centerlat + " "+ centerlng);
   const map = new google.maps.Map(
     document.getElementById("map") as HTMLElement,
     {
-      center: new google.maps.LatLng(-33.92, 151.25),
+      center: new google.maps.LatLng(centerlat, centerlng),
       zoom: 13,
       mapTypeId: "roadmap",
     }
@@ -51,15 +79,18 @@ function initAutocomplete() {
   var marker, i;
 
 
-  let locations : string[][]= [
-    ['Bondi Beach', '-33.890542', '151.274856', '4'],
-    ['Coogee Beach', '-33.923036','151.259052', '5'],
-    ['Cronulla Beach', '-34.028249', '151.157507', '3'],
-    ['Manly Beach', '-33.80010128657071', '151.28747820854187', '2'],
-    ['Maroubra Beach', '-33.950198', '151.259302', '1']
-  ];
-  
+  // let locations : string[][]= [
+  //   ['Bondi Beach', '-33.890542', '151.274856', '4'],
+  //   ['Coogee Beach', '-33.923036','151.259052', '5'],
+  //   ['Cronulla Beach', '-34.028249', '151.157507', '3'],
+  //   ['Manly Beach', '-33.80010128657071', '151.28747820854187', '2'],
+  //   ['Maroubra Beach', '-33.950198', '151.259302', '1']
+  // ];
+ // console.log(returnLocationArray('3761 20 st nw edmonton|3762 20 st nw edmonton'));
 
+
+
+ console.log('here are the locations: '+ locations);
   for (i = 0; i < locations.length; i++) {  
     marker = new google.maps.Marker({
       position: new google.maps.LatLng(Number(locations[i][1]),Number( locations[i][2])),
@@ -68,11 +99,15 @@ function initAutocomplete() {
     
     google.maps.event.addListener(marker, 'click', (function(marker, i) {
       return function() {
+        if(locations)
+  {
         infowindow.setContent(locations[i][0]);
         infowindow.open(map, marker);
+  }
       }
     })(marker, i));
    }
+  
 
 
   // Create the search box and link it to the UI element.
