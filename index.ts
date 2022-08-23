@@ -35,7 +35,7 @@ let centerlng : number = obj.centerlng;
           let stringLng : string = result.geometry.location.lng.toString();
           centerlat = result.geometry.location.lat;
           centerlng =result.geometry.location.lng;
-          let formatted_address : string = result.formatted_address;
+          let formatted_address : string = result.formatted_address.replace("\"","");
           let locationarray : string[] = [formatted_address,stringLat,stringLng,count.toString()];
           console.log( locationarray);
           locationArray.push(locationarray);
@@ -79,14 +79,6 @@ function initAutocomplete() {
   var marker, i;
 
 
-  // let locations : string[][]= [
-  //   ['Bondi Beach', '-33.890542', '151.274856', '4'],
-  //   ['Coogee Beach', '-33.923036','151.259052', '5'],
-  //   ['Cronulla Beach', '-34.028249', '151.157507', '3'],
-  //   ['Manly Beach', '-33.80010128657071', '151.28747820854187', '2'],
-  //   ['Maroubra Beach', '-33.950198', '151.259302', '1']
-  // ];
- // console.log(returnLocationArray('3761 20 st nw edmonton|3762 20 st nw edmonton'));
 
 
 
@@ -97,11 +89,16 @@ function initAutocomplete() {
       map: map
     });
     
+
+
     google.maps.event.addListener(marker, 'click', (function(marker, i) {
       return function() {
+
+        let content :string = "<div><a href= \"https://www.google.com/maps/place/"+locations[i][0]+"\">"+locations[i][0]+"</div>" ;
+
         if(locations)
   {
-        infowindow.setContent(locations[i][0]);
+        infowindow.setContent(content);
         infowindow.open(map, marker);
   }
       }
