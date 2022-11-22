@@ -23,7 +23,7 @@ let centerlng : number = obj.centerlng;
   console.log(arr);
   arr.forEach(element => {
     count++;
-    fetch("https://maps.googleapis.com/maps/api/geocode/json?address="+element+"&key=AIzaSyCP25x8TMx7au58HJtmE_8518KEpQw2xgU", requestOptions)
+    fetch("https://maps.googleapis.com/maps/api/geocode/json?address="+element+"&key=AIzaSyD8YAa2DkUThwVWZPTKDLfYpS-H_Yq9OP4", requestOptions)
   .then(response => response.text())
   .then(  result =>{
     console.log(result);
