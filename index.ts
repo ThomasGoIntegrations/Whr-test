@@ -94,8 +94,8 @@ function initAutocomplete() {
     google.maps.event.addListener(marker, 'click', (function(marker, i) {
       return function() {
 
-        let content :string = "<div><a href= \"https://www.google.com/maps/place/"+locations[i][0]+"\">"+locations[i][0]+"</div>" ;
-
+       // let content :string = "<div><a href= \"https://www.google.com/maps/place/"+locations[i][0]+"\">"+locations[i][0]+"</div>" ;
+let content :string =locations[i][0];
         if(locations)
   {
         infowindow.setContent(content);
